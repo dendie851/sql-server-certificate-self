@@ -10,10 +10,7 @@
   ## Daftar Isi
 - [Panduan Lengkap: Konfigurasi SSL/TLS Certificate pada Microsoft SQL Server](#panduan-lengkap-konfigurasi-ssltls-certificate-pada-microsoft-sql-server)
   - [Daftar Isi](#daftar-isi)
-  - [1. Konsep Dasar \& Protokol](#1-konsep-dasar--protokol)
-  - [2. Anatomi Self-Signed Certificate](#2-anatomi-self-signed-certificate)
-  - [3. Prasyarat \& Persiapan](#3-prasyarat--persiapan)
-  - [4. Langkah 1: Membuat Self-Signed Certificate via PowerShell](#4-langkah-1-membuat-self-signed-certificate-via-powershell)
+- [Contoh: Membuat sertifikat yang berlaku selama 3 tahun kedepan](#contoh-membuat-sertifikat-yang-berlaku-selama-3-tahun-kedepan)
   - [5. Langkah 2: Memberikan Akses Service Account SQL Server](#5-langkah-2-memberikan-akses-service-account-sql-server)
   - [6. Langkah 3: Mendaftarkan Sertifikat ke SQL Server Configuration Manager](#6-langkah-3-mendaftarkan-sertifikat-ke-sql-server-configuration-manager)
   - [7. Langkah 4: Konfigurasi Sisi Klien (Client)](#7-langkah-4-konfigurasi-sisi-klien-client)
@@ -23,54 +20,20 @@
   - [9. FAQ / Tanya Jawab Seputar Enkripsi SQL Server](#9-faq--tanya-jawab-seputar-enkripsi-sql-server)
   - [10. Troubleshooting: "certificate chain was issued by an authority that is not trusted"](#10-troubleshooting-certificate-chain-was-issued-by-an-authority-that-is-not-trusted)
 
-  ---
 
-  ## 1. Konsep Dasar & Protokol
-
-  Komunikasi terenkripsi antara aplikasi klien dan SQL Server menggunakan dua lapisan utama:
-  * **TDS (Tabular Data Stream):** Protokol aplikasi dasar yang digunakan oleh driver Microsoft SQL Server untuk berkomunikasi dengan database engine.
-  * **TLS (Transport Layer Security):** Protokol standar industri yang melapisi TDS untuk mengenkripsi seluruh data (query, parameter, hasil data, password) agar aman dari serangan *Man-in-the-Middle* (Sniffing).
-
-  ---
-
-  ## 2. Anatomi Self-Signed Certificate
-
-  Berbeda dengan sertifikat dari CA (Certificate Authority) publik atau perusahaan yang memiliki hirarki ketat (Root CA $\rightarrow$ Intermediate CA $\rightarrow$ Server Cert), **Self-Signed Certificate** memiliki karakteristik berikut:
-  * **Root/Intermediate CA:** Tidak ada. Komputer lokal bertindak sebagai pembuat sekaligus yang mempercayainya.
-  * **Private Key:** Tersedia dan tersimpan aman di sistem operasi Windows (`Cert:\LocalMachine\My`). Berfungsi untuk mengenkripsi dan mendekripsi data.
-  * **Domain / Hostname (`-DnsName`):** Ditentukan saat pembuatan sertifikat. Nama server atau IP yang Anda daftarkan di sini harus sesuai dengan yang dipanggil oleh klien pada *connection string* (kecuali jika mengabaikan validasi via parameter klien).
-
-  ---
-
-  ## 3. Prasyarat & Persiapan
-  * Akses Administrator ke mesin server Windows tempat SQL Server diinstal.
-  * PowerShell versi terbaru.
-  * SQL Server Configuration Manager.
-
-  Sebelum mulai, pastikan **hostname** dan **IP address** server sudah sesuai. Catat nilainya karena akan dipakai pada parameter `-DnsName` di Langkah 1.
-
-  ![Cek hostname server](screenshoot/1-check-host.png)
-
-  ![Cek IP address server](screenshoot/2-check-ip.png)
-
-  ---
-
-  ## 4. Langkah 1: Membuat Self-Signed Certificate via PowerShell
-
-  1. Buka **PowerShell** sebagai **Administrator**.
-  2. Jalankan skrip berikut (sesuaikan nama komputer, FQDN, atau IP server Anda pada parameter `-DnsName`):
-
-  ![Membuat self-signed certificate via PowerShell](screenshoot/3-create-certificate.png)
+# Contoh: Membuat sertifikat yang berlaku selama 3 tahun kedepan
+$endDate = (Get-Date).AddYears(3)
 
   ```powershell
-  New-SelfSignedCertificate `
-      -CertStoreLocation "Cert:\LocalMachine\My" `
-      -DnsName "Dev01", "localhost", "192.168.100.35" `
-      -KeySpec KeyExchange `
-      -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.1") `
-      -FriendlyName "SQLServerSelfSignedCert"
+New-SelfSignedCertificate `
+    -CertStoreLocation "Cert:\LocalMachine\My" `
+    -DnsName "Dev01", "localhost", "192.168.100.35" `
+    -KeySpec KeyExchange `
+    -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.1") `
+    -FriendlyName "SQLServerSelfSignedCert" `
+    -NotAfter $endDate
   ```
-
+  
   -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.1")?
 
   Parameter ini digunakan untuk menambahkan EKU (Enhanced Key Usage) atau ekstensi teks khusus ke dalam sertifikat.
