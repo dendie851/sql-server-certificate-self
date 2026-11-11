@@ -171,7 +171,7 @@
   Tambahkan `TrustServerCertificate=True` di dalam *connection string* aplikasi Anda. 
   * *Contoh (.NET):*
     ```text
-    Server=NAMA_KOMPUTER;Database=MyDb;User Id=sa;Password=myPassword;TrustServerCertificate=True;
+    Server=NAMA_KOMPUTER;Database=MyDb;User Id=sa;Password=myPassword;Encrypt=True;TrustServerCertificate=True;
     ```
   * **Catatan:** Enkripsi **tetap berjalan 100%**, namun klien mengabaikan validasi apakah sertifikat tersebut berasal dari CA resmi atau apakah nama domainnya cocok.
 
