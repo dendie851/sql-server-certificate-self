@@ -241,12 +241,12 @@
 
   1.4 Pada tab Flags, ubah opsi Force Encryption dari No menjadi Yes.
 
-  (screenshoot/29-config-sqlserver-force-engkripsi-for-client.png)
+  ![Kxxx](screenshoot/29-config-sqlserver-force-engkripsi-for-client.png)
 
   **Verifikasi**
   Untuk memastikan bahwa seluruh koneksi yang masuk ke database benar-benar telah terenkripsi secara otomatis oleh server, jalankan query verifikasi berikut melalui SQL Server Management Studio (SSMS) atau Azure Data Studio:
 
-  (screenshoot/29-config-sqlserver-force-engkripsi-for-client.png)
+  ![Kxxx](screenshoot/30-config-sqlserver-force-engkripsi-for-client-dan-pembukitan.png)
 
 
   ## 9. FAQ / Tanya Jawab Seputar Enkripsi SQL Server
