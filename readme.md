@@ -234,8 +234,11 @@
   **Konfigurasi Server di SQL Server Configuration Manager**
 
   1.1 Buka SQL Server Configuration Manager pada server database.
+  
   1.2 Masuk ke menu SQL Server Network Configuration > Protocols for MSSQLSERVER (klik kanan lalu pilih Properties).
+
   1.3 Pada tab Certificate, pilih sertifikat server yang telah diimpor sebelumnya.
+
   1.4 Pada tab Flags, ubah opsi Force Encryption dari No menjadi Yes.
 
   (screenshoot/29-config-sqlserver-force-engkripsi-for-client.png)
@@ -243,7 +246,7 @@
   **Verifikasi**
   Untuk memastikan bahwa seluruh koneksi yang masuk ke database benar-benar telah terenkripsi secara otomatis oleh server, jalankan query verifikasi berikut melalui SQL Server Management Studio (SSMS) atau Azure Data Studio:
 
-  (screenshoot/30-config-sqlserver-force-engkripsi-for-client.png)
+  (screenshoot/29-config-sqlserver-force-engkripsi-for-client.png)
 
 
   ## 9. FAQ / Tanya Jawab Seputar Enkripsi SQL Server
